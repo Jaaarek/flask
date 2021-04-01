@@ -7,7 +7,6 @@ from flask import (
     session,
     url_for
 )
-#dupa
 class User:
     def __init__(self, id, username, password):
         self.id = id
