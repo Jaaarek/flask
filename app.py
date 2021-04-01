@@ -41,23 +41,25 @@ def main():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session.clear()
-    if request.method == 'POST':
-        session.pop('user_id', None)
+    try:
+        if request.method == 'POST':
+            session.pop('user_id', None)
 
-        username = request.form['username']
-        password = request.form['password']
+            username = request.form['username']
+            password = request.form['password']
 
-        user = [x for x in users if x.username == username][0]
-        if user and user.password == password and user.credentials == 'admin':
-            session['user_id'] = user.id
-            return redirect(url_for('admin'))
+            user = [x for x in users if x.username == username][0]
+            if user and user.password == password and user.credentials == 'admin':
+                session['user_id'] = user.id
+                return redirect(url_for('admin'))
 
-        elif user and user.password == password and user.credentials == 'user':
-            session['user_id'] = user.id
-            return redirect(url_for('user'))
+            elif user and user.password == password and user.credentials == 'user':
+                session['user_id'] = user.id
+                return redirect(url_for('user'))
 
+            return redirect(url_for('login'))
+    except:
         return redirect(url_for('login'))
-
     return render_template('login.html')
 
 @app.route('/user')
