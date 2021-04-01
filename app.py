@@ -33,6 +33,10 @@ def before_request():
         user = [x for x in users if x.id == session['user_id']][0]
         g.user = user
         
+@app.route('/')
+def main():
+    return redirect(url_for('login'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -50,17 +54,17 @@ def login():
 
         elif user and user.password == password and user.credentials == 'user':
             session['user_id'] = user.id
-            return redirect(url_for('profile'))
+            return redirect(url_for('user'))
 
         return redirect(url_for('login'))
 
     return render_template('login.html')
 
-@app.route('/profile')
-def profile():
+@app.route('/user')
+def user():
     if not g.user:
         return redirect(url_for('login'))
-    return render_template('profile.html')
+    return render_template('user.html')
 
 @app.route('/admin')
 def admin():
