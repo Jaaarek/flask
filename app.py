@@ -49,34 +49,20 @@ def login():
             password = request.form['password']
 
             user = [x for x in users if x.username == username][0]
-            if user and user.password == password and user.credentials == 'admin':
+            if user and user.password == password:
                 session['user_id'] = user.id
-                return redirect(url_for('admin'))
-
-            elif user and user.password == password and user.credentials == 'user':
-                session['user_id'] = user.id
-                return redirect(url_for('user'))
+                return redirect(url_for('menu'))
 
             return redirect(url_for('login'))
     except:
         return redirect(url_for('login'))
     return render_template('login.html')
 
-@app.route('/user')
-def user():
+@app.route('/menu')
+def menu():
     if not g.user:
         return redirect(url_for('login'))
-    return render_template('user.html')
-
-@app.route('/admin')
-def admin():
-    if 'user_id' in session:
-        user = [x for x in users if x.id == session['user_id']][0]
-        if user.credentials != 'admin':
-            return redirect(url_for('login'))            
-    if not g.user:
-        return redirect(url_for('login'))
-    return render_template('admin.html')
+    return render_template('menu.html')
 
 if __name__ == '__main__':
     app.run(debug = True)
