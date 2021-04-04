@@ -1,6 +1,6 @@
 <div class="hero-head">
     <div class="box">
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="container">
 
         <div class="navbar-brand">
@@ -11,12 +11,19 @@
               </a>
             </span>
           </span>
+          
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+
         </div>
 
-        <div id="navbarMenuHeroB" class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-end">
 
-            {% if g.user.credentials == "admin" %}
+            {% if g.credentials == "admin" %}
             {% include 'navbar_admin.html' %}
             {% endif %}
 

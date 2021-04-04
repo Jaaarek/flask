@@ -1,0 +1,76 @@
+from flask import (
+    Flask,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+    json
+)
+from flask_mysqldb import MySQL, MySQLdb
+
+app = Flask(__name__)
+app.config['MYSQL_USER'] = '19294_zpi'
+app.config['MYSQL_PASSWORD'] = 'zpipwr2021'
+app.config['MYSQL_DB'] = '19294_zpi'
+app.config['MYSQL_HOST'] = 'zpipwr2021.atthost24.pl'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+mysql = MySQL(app)
+
+app.secret_key = 'somesecretkeythatonlyishouldknow'
+
+@app.before_request
+def before_request():
+    
+    if 'username' in session:
+        username = session['username']
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute("SELECT * FROM Users WHERE username=%s",(username,))
+        user = cur.fetchone()
+        cur.close()
+        g.user = user['username']
+        g.credentials = user['credential']
+    else:
+        g.user = None
+        
+@app.route('/')
+def main():
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    session.clear()
+
+    if request.method == 'POST':
+        session.pop('username', None)
+
+        username = request.form['username']
+        password = request.form['password']
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute("SELECT * FROM Users WHERE username=%s",(username,))
+        user = cur.fetchone()
+        cur.close()
+
+        if len(user) > 0:
+            if password == user['password']:
+                session['username'] = user['username']
+                return redirect(url_for('menu'))
+
+        return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/menu')
+def menu():
+    if not g.user:
+        return redirect(url_for('login'))
+    return render_template('menu.html')
+
+if __name__ == '__main__':
+    app.run(debug = True)
+
+
+
+    
