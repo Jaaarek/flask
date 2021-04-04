@@ -31,6 +31,7 @@ def before_request():
         cur.close()
         g.user = user['username']
         g.credentials = user['credential']
+        g.id = user['id']
     else:
         g.user = None
         
@@ -68,8 +69,29 @@ def menu():
         return redirect(url_for('login'))
     return render_template('menu.html')
 
+@app.route('/menu/users', methods=['GET', 'POST'])
+def users():
+    if g.credentials == 'user':
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        username = request.form['username_add']
+        password = request.form['password_add']
+        credential = request.form['credentials_select']
+        if credential == 'Użytkownik':
+            credential = 'user'
+        elif credential == 'Administrator':
+            credential = 'admin'
+        elif credential == 'Operator':
+            credential = 'operator'
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO Users (id, username, password, credential) VALUES (%s, %s, %s, %s)',(4, username, password, credential))    
+        mysql.connection.commit()
+    return render_template('users.html')
+
 if __name__ == '__main__':
     app.run(debug = True)
+
 
 
 
