@@ -6,64 +6,107 @@
     <title>Profile Page</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script>
+      function openTab(evt, tabName) {
+        var i, x, tablinks;
+        x = document.getElementsByClassName("content-tab");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab");
+        for (i = 0; i < x.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " is-active";
+      }
+    </script>
+
   </head>
   <body>
     <section class="hero is-fullheight">
       
       {% include 'navbar.html' %}
 
-      <div class="hero-body">
-        <div class="container has-text-centered">
-            <div class="columns is-centered">
-                <div class="column is-half">
-                  <div class="box">
-                  <form method="POST">
-                    <div class="field">
-                      <label class="label">Podaj nazwe użytkownika</label>
-                      <div class="control has-icons-left">
-                        <input class="input" type="text" name="username_add" placeholder="Username">
-                        <span class="icon is-small is-left">
-                          <i class="fas fa-user"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="field">
-                      <label class="label">Podaj hasło</label>
-                      <p class="control has-icons-left">
-                        <input class="input" type="text" name="password_add" placeholder="Password">
-                        <span class="icon is-small is-left">
-                          <i class="fas fa-lock"></i>
-                        </span>
-                      </p>
-                    </div>
-                    
-                    <div class="field">
-                        <label class="label">Wybierz uprawnienia</label>
-                    <div class="select">
-                        <select name="credentials_select">
-                          <option>Użytkownik</option>
-                          <option>Operator</option>
-                          <option>Administrator</option>
-                        </select>
-                      </div>
-                    </div>
+      <nav class="tabs is-boxed is-fullwidth is-large">
+        <div class="container">
+          <ul>
+            <li class="tab is-active" onclick="openTab(event,'WebDev')"><a >Dodaj użytkownika</a></li>
+            <li class="tab" onclick="openTab(event,'WebAud')"><a >Lista użytkowników</a></li>
 
-                    <div class="field">
-                      <p class="control">
-                        <button type="submit" class="button is-info is-fullwidth">
-                          Utwórz konto
-                        </button>
-                      </p>
-                    </div>
-                  </form>
-                  </div>
-                </div>
-                
-              </div>
-      
-            </div>
+          </ul>
         </div>
-      </div>
+      </nav>
+
+      <div class="container section">
+        <div id="WebDev" class="content-tab" >
+
+          <div class="box">
+            <form method="POST">
+              <div class="field">
+                <label class="label">Podaj nazwe użytkownika</label>
+                <div class="control has-icons-left">
+                  <input class="input" type="text" name="username_add" placeholder="Username">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">Podaj hasło</label>
+                <p class="control has-icons-left">
+                  <input class="input" type="text" name="password_add" placeholder="Password">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </p>
+              </div>
+              
+              <div class="field">
+                  <label class="label">Wybierz uprawnienia</label>
+              <div class="select">
+                  <select name="credentials_select">
+                    <option>Użytkownik</option>
+                    <option>Operator</option>
+                    <option>Administrator</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <p class="control">
+                  <button type="submit" class="button is-info is-fullwidth">
+                    Utwórz konto
+                  </button>
+                </p>
+              </div>
+            </form>
+
+
+            </div>
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            {% if msg == "Taki użytkownik już istnieje"%}
+              <div class="notification is-danger is-light has-text-centered">{{msg}}</div>
+            {% endif %}
+
+            {% if msg == "Pomyślnie utworzono użytkownika"%}
+            <div class="notification is-success is-light has-text-centered">{{msg}}</div>
+          {% endif %}
+
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+        
+        <div id="WebAud" class="content-tab" style="display:none">
+
+        </div>
+    </div>
+    
     </section>
   </body>
 </html>

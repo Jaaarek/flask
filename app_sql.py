@@ -6,7 +6,8 @@ from flask import (
     request,
     session,
     url_for,
-    json
+    json,
+    flash
 )
 from flask_mysqldb import MySQL, MySQLdb
 
@@ -47,7 +48,7 @@ def login():
     if request.method == 'POST':
         session.pop('username', None)
 
-        username = request.form['username']
+        username = request.form['username'].lower()
         password = request.form['password']
         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cur.execute("SELECT * FROM Users WHERE username=%s",(username,))
@@ -75,7 +76,7 @@ def users():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        username = request.form['username_add']
+        username = request.form['username_add'].lower()
         password = request.form['password_add']
         credential = request.form['credentials_select']
         if credential == 'Użytkownik':
@@ -84,10 +85,21 @@ def users():
             credential = 'admin'
         elif credential == 'Operator':
             credential = 'operator'
-        cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO Users (id, username, password, credential) VALUES (%s, %s, %s, %s)',(4, username, password, credential))    
-        mysql.connection.commit()
+
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute("SELECT * FROM Users WHERE username=%s",(username.lower(),))
+        user = cur.fetchone()
+        cur.close()
+
+        if user == None:
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO Users (username, password, credential) VALUES (%s, %s, %s)',(username, password, credential))    
+            mysql.connection.commit()
+            flash("Pomyślnie utworzono użytkownika")
+        else:
+            flash("Taki użytkownik już istnieje", "info")
     return render_template('users.html')
+
 
 if __name__ == '__main__':
     app.run(debug = True)
