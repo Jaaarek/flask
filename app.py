@@ -78,6 +78,7 @@ def users():
     if request.method == 'POST':
         username = request.form['username_add'].lower()
         password = request.form['password_add']
+        password2 = request.form['password_add2']
         credential = request.form['credentials_select']
         if credential == 'Użytkownik':
             credential = 'user'
@@ -92,10 +93,13 @@ def users():
         cur.close()
 
         if user == None:
-            cur = mysql.connection.cursor()
-            cur.execute('INSERT INTO Users (username, password, credential) VALUES (%s, %s, %s)',(username, password, credential))    
-            mysql.connection.commit()
-            flash("Pomyślnie utworzono użytkownika")
+            if password != password2:
+                flash("Hasła nie są jednakowe")
+            else:
+                cur = mysql.connection.cursor()
+                cur.execute('INSERT INTO Users (username, password, credential) VALUES (%s, %s, %s)',(username, password, credential))    
+                mysql.connection.commit()
+                flash("Pomyślnie utworzono użytkownika")
         else:
             flash("Taki użytkownik już istnieje", "info")
     return render_template('users.html')

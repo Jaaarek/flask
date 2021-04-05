@@ -61,6 +61,16 @@
                   </span>
                 </p>
               </div>
+
+              <div class="field">
+                <label class="label">Powtórz hasło</label>
+                <p class="control has-icons-left">
+                  <input class="input" type="text" name="password_add2" placeholder="Password">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </p>
+              </div>
               
               <div class="field">
                   <label class="label">Wybierz uprawnienia</label>
@@ -90,13 +100,18 @@
         {% with messages = get_flashed_messages() %}
         {% if messages %}
           {% for msg in messages %}
+
             {% if msg == "Taki użytkownik już istnieje"%}
+              <div class="notification is-danger is-light has-text-centered">{{msg}}</div>
+            {% endif %}
+
+            {% if msg == "Hasła nie są jednakowe"%}
               <div class="notification is-danger is-light has-text-centered">{{msg}}</div>
             {% endif %}
 
             {% if msg == "Pomyślnie utworzono użytkownika"%}
             <div class="notification is-success is-light has-text-centered">{{msg}}</div>
-          {% endif %}
+            {% endif %}
 
           {% endfor %}
         {% endif %}
